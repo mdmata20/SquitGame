@@ -1,1 +1,1 @@
-# SquitGame
+# SquidGame
