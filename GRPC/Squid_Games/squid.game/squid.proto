@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "squid.game";
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.helloworld";
+option java_outer_classname = "HelloWorldProto";
+
+package squidGame;
+
+
+message Juego{
+    int64 id = 1;
+    string juego = 2;
+    int64 max = 3;
+}
+
+message GameRequest{
+    Juego game = 1;
+}
+
+message GameResponse{
+    string result = 1;
+}
+
+service GameService{
+    rpc RegGame(GameRequest) returns (GameResponse){};
+}
