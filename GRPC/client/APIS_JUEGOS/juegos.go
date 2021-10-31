@@ -1,4 +1,5 @@
-package main
+
+package prueba
 
 
 import (
@@ -8,7 +9,8 @@ import (
 )
 
 
-/* juego 1 */
+
+
 func juego1(jugadores int) int {
 	rand.Seed(time.Now().UnixNano())
 
@@ -32,7 +34,7 @@ func juego1(jugadores int) int {
 	return Campeon
 }
 
-/* juego 2 */
+
 func juego2(jugadores int) int {
 	rand.Seed(time.Now().UnixNano())
 
@@ -60,7 +62,7 @@ func juego2(jugadores int) int {
 
 }
 
-/* juego 3 */
+
 func juego3(jugadores int) int {
 	rand.Seed(time.Now().UnixNano())
 
@@ -91,8 +93,9 @@ func juego3(jugadores int) int {
 
 
 
-func main() {
+func prueba() {
 	juego3(20)
 	//juego2(10)
 	//juego1(20)
 }
+
