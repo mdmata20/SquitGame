@@ -2,59 +2,111 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
-	gamepb "squidGame/squid.game"
+	gamepb "squidGame/squid.game" // debe tener el mismo cliente
 
 	"google.golang.org/grpc"
 )
 
-func insertGame(id int64, juego string, max int64){
-	server_host := "0.0.0.0:8082"
+type juegoStruct struct {
+	Id    int64
+	Juego string
+	Max   int64
+}
 
-	fmt.Println("Enviando peticion . . .")
+func insertGame(id int64, juego string, max int64) {
+	server_host := "0.0.0.0:8082" //debe ser la de cliente
 
-	conn,err:= grpc.Dial(server_host, grpc.WithInsecure(),grpc.WithBlock())
+	fmt.Println("Sending petition . . .")
 
-	if err != nil{
-		fmt.Println("Error enviando peticion :  %v",err)
+	conn, err := grpc.Dial(server_host, grpc.WithInsecure(), grpc.WithBlock())
+
+	if err != nil {
+		fmt.Println("Error enviando peticion :  %v", err)
 
 	}
 
 	defer conn.Close()
 
-	c:= gamepb.NewGameServiceClient(conn)
-	
-	fmt.Println("Todo bien hasta aqui")
+	c := gamepb.NewGameServiceClient(conn)
+
+	fmt.Println("Petition status: Healthy")
 
 	request := &gamepb.GameRequest{
 		Game: &gamepb.Juego{
 			Id:    id,
 			Juego: juego,
 			Max:   max,
-			
 		},
 	}
-	
-	
-	fmt.Println("Enviando datos al servidor")
+
+	fmt.Println("sending data to server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	res,err:= c.RegGame(ctx, request)
-	
-	if err != nil{
-		log.Fatal("Error al enviar petición: %v",err)
+	res, err := c.RegGame(ctx, request)
+
+	if err != nil {
+		log.Fatal("Error al enviar petición: %v", err)
 	}
 
-	fmt.Println("okas: ", res.Result)
-
+	fmt.Println("Working, data received: ", res.Result)
 
 }
 
-func main(){
-	insertGame(2,"A",20)
+//               quien responde              lo que trae
+func http_server(w http.ResponseWriter, r *http.Request) {
+	//instance_Name:= "grpcInstancia"
+	//fmt.Printf("Http request from client: ", instance_Name)
+	fmt.Println("Welcome to api")
+
+	if r.URL.Path != "/grpc" {
+		http.Error(w, "404 not found", http.StatusNotFound)
+	}
+
+	switch r.Method {
+	case "GET":
+		fmt.Println("Http for client")
+		http.StatusText(http.StatusAccepted)
+	case "POST":
+		fmt.Println("Sending...")
+		decoder := json.NewDecoder(r.Body)
+
+		var squidgame juegoStruct
+
+		err := decoder.Decode(&squidgame)
+
+		if err != nil {
+			fmt.Printf("El error está en la decodificacion %v", err)
+		}
+
+		fmt.Fprintf(w, "se recibió \n")
+
+		insertGame(squidgame.Id, squidgame.Juego, squidgame.Max)
+
+	default:
+		fmt.Println("me perdí y me dio amsiedad")
+		return
+	}
+
+}
+
+func main() {
+
+	host := ":8080"
+
+	fmt.Println("Server started at: ", host)
+
+	http.HandleFunc("/grpc", http_server)
+
+	if err := http.ListenAndServe(host, nil); err != nil {
+		log.Fatal(err)
+	}
+
 }
