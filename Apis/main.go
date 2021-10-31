@@ -120,6 +120,6 @@ func main() {
 	router.HandleFunc("/JuegoMongo1", JuegoMongo1)
 	router.HandleFunc("/JuegoRedis", JuegoRedis)
 
-	log.Fatal(http.ListenAndServe(":3000", router))
+	log.Fatal(http.ListenAndServe(":3010", router))
 	
 }

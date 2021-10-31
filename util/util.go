@@ -73,7 +73,7 @@ func JuegoMongo1(){
 
 
 func main() {
-	/*
+	
 	client := redis.NewClient(&redis.Options {
 		Addr: "34.125.230.217:6379",
 		Password: "",
@@ -101,6 +101,6 @@ func main() {
     }
 
 	fmt.Println(val)
-	*/
+	
 	JuegoMongo1()
 }
