@@ -39,6 +39,7 @@ func juego1(jugadores int) int {
 
 	for i := 1; i <= jugadores; i++ {
 		ganador = append(ganador, i)
+		fmt.Println(ganador)
 	}
 
 	fmt.Println("El ganador es: ")
@@ -139,7 +140,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 
 	petition := bytes.NewBuffer(peticion)
 
-	response, err := http.Post("http://localhost:3000/JuegoMongo1", "application/json", petition)
+	response, err := http.Post("http://localhost:3010/JuegoMongo1", "application/json", petition)
 	if err != nil {
 		log.Fatalln("Error sending info", err)
 	}
@@ -160,7 +161,6 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 
 	return res, nil
 }
-
 func main() {
 	host := "0.0.0.0:8082"
 	fmt.Println("Server iniciado en: " + host)
