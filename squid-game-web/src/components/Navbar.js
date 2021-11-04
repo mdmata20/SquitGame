@@ -15,7 +15,10 @@ export default class Navbar extends Component {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item active">
-                <Link to="/" className="nav-link">Games</Link>
+                <Link to="/" className="nav-link">Last 10 Games</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/best10" className="nav-link">Best 10 Players</Link>
               </li>
               <li className="nav-item">
                 <Link to="/reports" className="nav-link">Reports</Link>

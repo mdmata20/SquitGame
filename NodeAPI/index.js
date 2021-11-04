@@ -25,7 +25,7 @@ var express = require('express'),
   port = process.env.PORT || 4001;
 
 
-//app.use(cors())
+app.use(cors())
 
 //app.use(express.urlencoded({ extended: true }));
 //app.use(express.json());
