@@ -35,8 +35,6 @@ func insertGame(id int64, juego string, max int64) {
 
 	c := gamepb.NewGameServiceClient(conn)
 
-	fmt.Println("Petition status: Healthy")
-
 	request := &gamepb.GameRequest{
 		Game: &gamepb.Juego{
 			Id:    id,
@@ -44,8 +42,9 @@ func insertGame(id int64, juego string, max int64) {
 			Max:   max,
 		},
 	}
-
+	fmt.Println(request)
 	fmt.Println("sending data to server...")
+	fmt.Println()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

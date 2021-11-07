@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"regexp"
 	"strconv"
@@ -12,10 +16,15 @@ import (
 	"time"
 )
 
-func endpoint(game string, players int, rungames int, concurrence int, timeout int) {
-	rand.Seed(time.Now().UnixNano())
+type juegoStruct struct {
+	Id    int    `json:"Id"`
+	Juego string `json:"Juego"`
+	Max   int    `json:"Max"`
+}
 
-	var conc []string
+func endpoint(game int, gamename string, players int, rungames int, concurrence int, timeout int) {
+	rand.Seed(time.Now().UnixNano())
+	var mem []juegoStruct
 	cont_corridas := rungames
 
 	cont_tiempo := timeout * 60
@@ -24,10 +33,15 @@ func endpoint(game string, players int, rungames int, concurrence int, timeout i
 		time.Sleep(1 * time.Second)
 
 		maxJugadores := rand.Intn(players)
-		jugadores := strconv.Itoa(maxJugadores)
-		endpoint := "/game/" + game + "/gamename/Random/players/" + jugadores
-		conc = append(conc, endpoint)
-		fmt.Println(cont_tiempo)
+
+		cuerpo := juegoStruct{
+			Id:    game,
+			Juego: gamename,
+			Max:   maxJugadores,
+		}
+
+		mem = append(mem, cuerpo)
+
 		cont_tiempo = cont_tiempo - 1
 		cont_corridas = cont_corridas - concurrence
 
@@ -36,32 +50,50 @@ func endpoint(game string, players int, rungames int, concurrence int, timeout i
 		}
 
 	}
-	fmt.Println(conc)
-	fmt.Println("")
-	fmt.Println("")
-	var wg sync.WaitGroup
 
-	endpointMax := len(conc)
+	endpointMax := len(mem)
+
 	partes := endpointMax / concurrence
-
+	//partes2 := int(partes)
+	var wg sync.WaitGroup
 	for i := 0; i < concurrence; i++ {
 		inicio := i * partes
+		fmt.Println("INICIO ", inicio)
 		fin := inicio + partes
 
-		parte := conc[inicio:fin]
-
+		fmt.Println("FIN ", fin)
+		parte := mem[inicio:fin]
+		fmt.Println("PARTE ", parte)
 		wg.Add(1)
 
-		go func(endpoints []string) {
+		go func(jsonJ []juegoStruct) {
 			defer wg.Done()
-			//var accesos string
 
-			for _, n := range endpoints {
-				fmt.Println("==========================")
-				fmt.Println(endpoints)
-				fmt.Println("****" + n + "***")
-				fmt.Println("aqui tenemos que enviar")
-				fmt.Println("==========================")
+			for _, n := range jsonJ {
+				time.Sleep(500 * time.Millisecond)
+				fmt.Println("===HACER POST AQUI============ \n \n ")
+				json_p, err := json.Marshal(n)
+				if err != nil {
+					fmt.Println("Error en MArshal")
+				}
+				resp, err := http.Post("http://localhost:8080/grpc", "application/json", bytes.NewBuffer(json_p))
+				if err != nil {
+					fmt.Println("Error de conexión")
+				}
+
+				defer resp.Body.Close()
+
+				if resp.StatusCode == http.StatusCreated {
+					body, err := ioutil.ReadAll(resp.Body)
+					if err != nil {
+						panic(err)
+					}
+
+					jsonStr := string(body)
+					fmt.Println("Response: ", jsonStr)
+				} else {
+					fmt.Println("Fail: ", resp.Status)
+				}
 			}
 
 			//	atomic.AddInt64(&int64(cont_tiempo), int64(concurrence))
@@ -84,8 +116,12 @@ func main() {
 	reg, err := regexp.Compile("( \\| [a-zA-Z]+[0-9]?)")
 	reg2, err2 := regexp.Compile(" \\| ")
 	reg3, err3 := regexp.Compile("m")
+	//reg4,err := regex.Compile("[0-9]")
+
 	processed := reg.ReplaceAllString(gamename1, "")
+	//numProc := reg4.ReplaceAllString(gamename1,"")
 	doublep := reg2.ReplaceAllString(processed, ",")
+	//numdoublep := reg2.ReplaceAllString(processed, ",")
 	timeout := reg3.ReplaceAllString(time, "")
 	game := strings.Split(doublep, ",")
 
@@ -106,8 +142,9 @@ func main() {
 
 	randomGame := rand.Intn(len(game))
 	pick := game[randomGame] //! PARAMETRO 1
+	pick2, err := strconv.Atoi(pick)
 
 	//fmt.Println(pick, jugadores, corridas, concurrence, tiempo)
-	endpoint(pick, jugadores, corridas, concurrencia, tiempo)
+	endpoint(pick2, "a", jugadores, corridas, concurrencia, tiempo)
 
 }
