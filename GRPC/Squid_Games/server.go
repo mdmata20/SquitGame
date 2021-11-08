@@ -19,9 +19,11 @@ import (
 )
 
 type gameStruct struct {
-	Id      int    `json:"Id"`
-	Juego   string `json:"Juego"`
-	Ganador int    `json:"Ganador"`
+	Id      int    `json:"ID"`
+	Juego   string `json:"juego"`
+	Ganador int    `json:"max"`
+	Players int    `json:"players"`
+	worker  string `json:"worker"`
 }
 
 type server struct {
@@ -115,6 +117,8 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 		Id:      desicion,
 		Juego:   juego,
 		Ganador: winner,
+		Players: maximo,
+		worker:  "RabbitMQ",
 	})
 
 	petition := bytes.NewBuffer(peticion)

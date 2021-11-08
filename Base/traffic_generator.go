@@ -22,6 +22,11 @@ type juegoStruct struct {
 	Max   int    `json:"Max"`
 }
 
+type decide struct {
+	id   int
+	name string
+}
+
 func endpoint(game int, gamename string, players int, rungames int, concurrence int, timeout int) {
 	rand.Seed(time.Now().UnixNano())
 	var mem []juegoStruct
@@ -96,6 +101,8 @@ func endpoint(game int, gamename string, players int, rungames int, concurrence 
 				}
 			}
 
+			time.Sleep(1 * time.Second)
+
 			//	atomic.AddInt64(&int64(cont_tiempo), int64(concurrence))
 		}(parte)
 	}
@@ -116,14 +123,17 @@ func main() {
 	reg, err := regexp.Compile("( \\| [a-zA-Z]+[0-9]?)")
 	reg2, err2 := regexp.Compile(" \\| ")
 	reg3, err3 := regexp.Compile("m")
-	//reg4,err := regex.Compile("[0-9]")
+	reg4, err := regexp.Compile("[0-9] \\| ")
 
 	processed := reg.ReplaceAllString(gamename1, "")
-	//numProc := reg4.ReplaceAllString(gamename1,"")
 	doublep := reg2.ReplaceAllString(processed, ",")
-	//numdoublep := reg2.ReplaceAllString(processed, ",")
-	timeout := reg3.ReplaceAllString(time, "")
 	game := strings.Split(doublep, ",")
+
+	ident := reg4.ReplaceAllString(gamename1, "")
+	ident2 := reg2.ReplaceAllString(ident, ",")
+	ident3 := strings.Split(ident2, ",")
+
+	timeout := reg3.ReplaceAllString(time, "")
 
 	jugadores, err1 := strconv.Atoi(players)
 	corridas, err1 := strconv.Atoi(rungames)
@@ -140,11 +150,15 @@ func main() {
 		log.Fatal(err1)
 	}
 
+	//game array num
+	// ident 3 array juego
+
 	randomGame := rand.Intn(len(game))
 	pick := game[randomGame] //! PARAMETRO 1
 	pick2, err := strconv.Atoi(pick)
+	pickG := ident3[randomGame]
 
-	//fmt.Println(pick, jugadores, corridas, concurrence, tiempo)
-	endpoint(pick2, "a", jugadores, corridas, concurrencia, tiempo)
+	//fmt.Println(pick2, pickG, jugadores, corridas, concurrencia, tiempo)
+	endpoint(pick2, pickG, jugadores, corridas, concurrencia, tiempo)
 
 }
