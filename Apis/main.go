@@ -35,15 +35,14 @@ type JuegoMongo struct {
 	Identificador int                `json: "ID"`
 	Juego         string             `json: "juego"`
 	Ganador       int                `json: "max"`
-	Players int    `json: "players"`
-	worker string    `json: "worker"`
+	Players       int    			 `json: "players"`
+	worker        string    		 `json: "worker"`
 }
 
 type Juego struct {
 	Id      int    `json: "ID"`
 	Juego   string `json: "juego"`
 	Ganador int    `json: "ganador"`
-	
 }
 
 func JuegoRedis(w http.ResponseWriter, r *http.Request) {
