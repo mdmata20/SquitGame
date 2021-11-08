@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	//"io/ioutil"
-
+	//"strconv"
 	"github.com/gorilla/mux"
 
 	"context"
@@ -35,12 +35,15 @@ type JuegoMongo struct {
 	Identificador int                `json: "ID"`
 	Juego         string             `json: "juego"`
 	Ganador       int                `json: "max"`
+	Players int    `json: "players"`
+	worker string    `json: "worker"`
 }
 
 type Juego struct {
 	Id      int    `json: "ID"`
 	Juego   string `json: "juego"`
 	Ganador int    `json: "ganador"`
+	
 }
 
 func JuegoRedis(w http.ResponseWriter, r *http.Request) {
@@ -59,12 +62,14 @@ func JuegoRedis(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	err1 := client.Set(ctx, "key", json, 0).Err()
+	keytime := time.Now()
+	
+	err1 := client.Set(ctx, keytime.String() , json, 0).Err()
 	if err1 != nil {
 		panic(err1)
 	}
 
-	val, err := client.Get(ctx, "key").Result()
+	val, err := client.Get(ctx, keytime.String()).Result()
 	if err != nil {
 		panic(err)
 	}
