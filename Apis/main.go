@@ -35,14 +35,14 @@ type JuegoMongo struct {
 	Identificador int                `json: "ID"`
 	Juego         string             `json: "juego"`
 	Ganador       int                `json: "max"`
-	Players       int    			 `json: "players"`
-	worker        string    		 `json: "worker"`
+	Players       int                `json: "players"`
+	worker        string             `json: "worker"`
 }
 
 type Juego struct {
-	Id      int    `json: "ID"`
-	Juego   string `json: "juego"`
-	Ganador int    `json: "ganador"`
+	Id    int    `json: "ID"`
+	Juego string `json: "juego"`
+	Max   int    `json: "max"`
 }
 
 func JuegoRedis(w http.ResponseWriter, r *http.Request) {
@@ -62,8 +62,8 @@ func JuegoRedis(w http.ResponseWriter, r *http.Request) {
 	}
 
 	keytime := time.Now()
-	
-	err1 := client.Set(ctx, keytime.String() , json, 0).Err()
+
+	err1 := client.Set(ctx, keytime.String(), json, 0).Err()
 	if err1 != nil {
 		panic(err1)
 	}
