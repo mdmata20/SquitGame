@@ -1,16 +1,24 @@
 import React from 'react'
 import Card from './Card'
 import socketIOClient from "socket.io-client";
-import './games.css'
 
-const API = "http://localhost:4001/api/games/top10";
+const API = "http://localhost:4001/api/games";
 const ENDPOINT = "http://localhost:4001";
 
-class Games extends React.Component {
+class AllGames extends React.Component {
+    
     state = {
         games: [
 
         ]
+    }
+
+    fetchGames = () => {
+        fetch(`${API}`)
+        .then((response) => response.json())
+        .then(gamesList => {
+            this.setState({ games: gamesList });
+        });
     }
 
     componentDidMount() {
@@ -24,23 +32,22 @@ class Games extends React.Component {
         });
 
         const socket = socketIOClient(ENDPOINT);
+
+        /*socket.on("FromAPI", data => {
+        //('hello geeks!');
+        console.log(data);
+        //console.log('hola');
+        //setResponse(data);
+        });*/
       
         socket.on("NewGamesNotify", data => {
             console.log('the db has changed!')
-            this.fetchLast10Games();
+            this.fetchGames();
         //toast.info('New Tweets have been pushed!', 
         //{position: toast.POSITION.TOP_CENTER});
         });
     }
 
-    fetchLast10Games = () => {
-        fetch(`${API}`)
-        .then((response) => response.json())
-        .then(gamesList => {
-            this.setState({ games: gamesList });
-        });
-    }
-    
     render() {
         return (
             
@@ -62,4 +69,4 @@ class Games extends React.Component {
     }
 }
 
-export default Games
+export default AllGames

@@ -1,8 +1,10 @@
 import React from 'react'
 import BestPlayer from './BestPlayer'
+import socketIOClient from "socket.io-client";
 import './games.css'
 
 const API = "http://localhost:4001/api/games/top10players";
+const ENDPOINT = "http://localhost:4001";
 
 class BestPlayers extends React.Component {
     state = {
@@ -12,6 +14,26 @@ class BestPlayers extends React.Component {
     }
 
     componentDidMount() {
+        fetch(`${API}`)
+        .then((response) => response.json())
+        .then(playersList => {
+            console.log(playersList);
+            this.setState({ players: playersList });
+        }).catch(err=>{
+            console.log(err)
+        });
+
+        const socket = socketIOClient(ENDPOINT);
+      
+        socket.on("NewGamesNotify", data => {
+            console.log('the db has changed!')
+            this.fetchBest10Players();
+        //toast.info('New Tweets have been pushed!', 
+        //{position: toast.POSITION.TOP_CENTER});
+        });
+    }
+
+    fetchBest10Players = () => {
         fetch(`${API}`)
         .then((response) => response.json())
         .then(playersList => {

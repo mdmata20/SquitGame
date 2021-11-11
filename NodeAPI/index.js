@@ -4,6 +4,8 @@ const axios = require('axios');
 const socket = require('socket.io')
 const http = require("http");
 const cors = require('cors')
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
 
 var games = require('./src/routes/games');
 
@@ -36,13 +38,50 @@ app.use('/', games);
 
 //var server = app.listen(port);
 
+// Connection URL
+const url = 'mongodb://34.125.189.71:27017';
+
+// Database Name
+const dbName = 'squid-game';
+
+const client = new MongoClient(url);
+
 const server = http.createServer(app);
 
 const io = socket(server);
 
 let interval
+var count = 0
+var newCount = 0
 
-/*io.on("connection", (socket) => {
+
+client.connect(function(err) {
+    assert.equal(null, err);
+    console.log("Connected correctly to server");
+
+    const db = client.db(dbName);
+
+    findGamesCount(db, function(docs) {
+        client.close();
+        //console.log(docs);
+        count = docs
+        console.log(count)
+    });
+});
+
+const findGamesCount = function(db, callback) {
+    // Get the documents collection
+    const collection = db.collection('games');
+    // Find some documents
+    collection.countDocuments({},function(err, docs) {
+      assert.equal(err, null);
+      console.log("Found the following records");
+      //console.log(docs)
+      callback(docs);
+    });
+}
+
+io.on("connection", (socket) => {
     console.log("New client connected");
     if (interval) {
         clearInterval(interval);
@@ -53,19 +92,43 @@ let interval
         clearInterval(interval);
     });
 });
-  
+
+
 const getApiAndEmit = (socket, jsonMsg) => {
     const response = new Date();
     // Emitting a new message. Will be consumed by the client
     //console.log(response)
     //console.log(jsonMsg)
-    if(messages.length > 0){
-        socket.emit("NewGamesNotify", messages.pop());
+    
+
+    const client2 = new MongoClient(url);
+
+    const db = client2.db(dbName);
+
+    client2.connect(function(err) {
+        assert.equal(null, err);
+        console.log("Connected correctly to server");
+    
+        const db = client2.db(dbName);
+    
+        findGamesCount(db, function(docs) {
+            client2.close();
+            //console.log(docs);
+            newCount = docs
+            console.log(count)
+            console.log(newCount)
+        });
+    });
+    if(newCount > count){
+        count = newCount
+        console.log('entro')
+        socket.emit("NewGamesNotify", newCount);
     }
     socket.emit("FromAPI", response);
     
 };
 
+/*
 // Esta funcion se utilizara para leer un mensaje
 // Se activara cuando se dispare el evento "message" del subscriber
 const messageReader = async message => {

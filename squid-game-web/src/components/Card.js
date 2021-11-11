@@ -4,7 +4,7 @@ function Card({Identificador, Juego, Ganador}) {
     return (
         <div className="card bg-dark">
             <div className="card-header text-light d-flex justify-content-between" >
-                <h5>{Juego}</h5>
+                <h5>Juego: {Juego}</h5>
             </div>
             <div className="card-body text-light">
                 <div>
