@@ -6,7 +6,7 @@ COPY . .
 
 RUN go mod download
 
-EXPOSE 3005
+EXPOSE 80
 
 CMD ["go","run","Sender.go"]
 

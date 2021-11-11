@@ -18,7 +18,7 @@ func error_(err error, msg string) {
 
 func conection() {
 	//Conectando al servidor
-	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@34.121.200.221:5672/")
 	error_(err, "Coneccion con RabbitMQ")
 	defer conn.Close()
 
@@ -61,7 +61,7 @@ func conection() {
 			log.Printf("Pasoooo -----------")
 			log.Printf("Mensage Recibido: %s", d.Body)
 			post := []byte(string(d.Body))                                                                              //convertimos a una cadena de bytes
-			req, err := http.Post("http://localhost:3010/JuegoMongo1", "application/json", bytes.NewBuffer(post)) //hacemos la peticion a la bd
+			req, err := http.Post("http://35.225.182.66:3010/JuegoMongo1", "application/json", bytes.NewBuffer(post)) //hacemos la peticion a la bd
 			if err != nil {
 				log.Fatal(err)
 			}
