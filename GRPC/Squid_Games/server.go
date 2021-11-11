@@ -123,7 +123,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 
 	petition := bytes.NewBuffer(peticion)
 
-	response, err := http.Post("http://localhost:3010/JuegoMongo1", "application/json", petition)
+	response, err := http.Post("http://34.72.92.9:80", "application/json", petition)
 	if err != nil {
 		log.Fatalln("Error sending info", err)
 	}
