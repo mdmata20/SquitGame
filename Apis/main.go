@@ -34,7 +34,7 @@ type JuegoMongo struct {
 	ID            primitive.ObjectID `bson:"_id,omitempty"`
 	Identificador int                `json: "ID"`
 	Juego         string             `json: "juego"`
-	Ganador       int                `json: "max"`
+	Max       int                    `json: "max"`
 	Players       int                `json: "players"`
 	worker        string             `json: "worker"`
 }
