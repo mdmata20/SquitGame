@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	topic         = "quickstart-events"
-	brokerAddress = "127.0.0.1:9092"
+	topic         = "mytopic"
+	brokerAddress = "34.125.131.17:19092"
 )
 
 func produce(ctx context.Context, resultado string) {

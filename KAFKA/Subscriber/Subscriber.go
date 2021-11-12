@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	topic         = "quickstart-events"
-	brokerAddress = "127.0.0.1:9092"
+	topic         = "mytopic"
+	brokerAddress = "34.125.131.17:19092"
 )
 
 type Block struct {
@@ -61,7 +61,7 @@ func consume(ctx context.Context) {
 
 		b := []byte(string(msg.Value))
 
-		resp, err := http.Post("http://localhost:3010/JuegoMongo1", "application/json",
+		resp, err := http.Post("http://35.225.182.66:3010/JuegoMongo1", "application/json",
 			bytes.NewBuffer(b))
 
 		if err != nil {
@@ -75,7 +75,7 @@ func consume(ctx context.Context) {
 			fmt.Print(err)
 		}
 
-		resp2, err := http.Post("http://localhost:3010/JuegoRedis", "application/json",
+		resp2, err := http.Post("http://35.225.182.66:3010/JuegoRedis", "application/json",
 			bytes.NewBuffer(b))
 
 		if err != nil {

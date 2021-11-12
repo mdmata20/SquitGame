@@ -1,11 +1,6 @@
 FROM golang
-
 WORKDIR /
-
 COPY . .
-
 RUN go mod download
-
-EXPOSE 80
-
-CMD ["go","run","server.go"]
+EXPOSE 8081
+CMD ["go","run","room.go"]
