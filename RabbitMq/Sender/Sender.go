@@ -28,7 +28,7 @@ func nuevo_(w http.ResponseWriter, r *http.Request) {
 	data, err := json.Marshal(body)
 
 	//Conectando al servidor
-	conn, err := amqp.Dial("amqp://guest:guest@34.121.200.221:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@35.222.63.100:5672/")
 	error_(err, "Coneccion con RabbitMQ")
 	defer conn.Close()
 

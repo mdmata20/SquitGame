@@ -61,7 +61,7 @@ func consume(ctx context.Context) {
 
 		b := []byte(string(msg.Value))
 
-		resp, err := http.Post("http://35.225.182.66:3010/JuegoMongo1", "application/json",
+		resp, err := http.Post("http://104.154.103.101:3010/JuegoMongo1", "application/json",
 			bytes.NewBuffer(b))
 
 		if err != nil {
@@ -75,7 +75,7 @@ func consume(ctx context.Context) {
 			fmt.Print(err)
 		}
 
-		resp2, err := http.Post("http://35.225.182.66:3010/JuegoRedis", "application/json",
+		resp2, err := http.Post("http://104.154.103.101:3010/JuegoRedis", "application/json",
 			bytes.NewBuffer(b))
 
 		if err != nil {
