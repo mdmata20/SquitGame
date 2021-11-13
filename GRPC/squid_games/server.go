@@ -118,12 +118,12 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 		Juego:   juego,
 		Ganador: winner,
 		Players: maximo,
-		worker:  "RabbitMQ",
+		worker:  "kafka",
 	})
 
 	petition := bytes.NewBuffer(peticion)
 
-	response, err := http.Post("http://104.197.111.247:80", "application/json", petition)
+	response, err := http.Post("http://34.122.191.135:2062", "application/json", petition)
 	if err != nil {
 		log.Fatalln("Error sending info", err)
 	}
