@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	gamepb "squidGame/squid.game" // debe tener el mismo cliente
+	gamepb "squidGameC/squid.game" // debe tener el mismo cliente
 
 	"google.golang.org/grpc"
 )
@@ -20,7 +20,7 @@ type juegoStruct struct {
 }
 
 func insertGame(id int64, juego string, max int64) {
-	server_host := "0.0.0.0:8082" //debe ser la de cliente
+	server_host := "Cserver:50051" //debe ser la de cliente
 
 	fmt.Println("Sending petition . . .")
 
@@ -32,6 +32,8 @@ func insertGame(id int64, juego string, max int64) {
 	}
 
 	defer conn.Close()
+
+	fmt.Println("aquiii vaaa")
 
 	c := gamepb.NewGameServiceClient(conn)
 
@@ -65,7 +67,11 @@ func http_server(w http.ResponseWriter, r *http.Request) {
 	//fmt.Printf("Http request from client: ", instance_Name)
 	fmt.Println("Welcome to api")
 
-	if r.URL.Path != "/grpc" {
+	instance_name := "grpcInstancia"
+
+	fmt.Println(instance_name)
+
+	if r.URL.Path != "/" {
 		http.Error(w, "404 not found", http.StatusNotFound)
 	}
 
@@ -98,11 +104,17 @@ func http_server(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	instance_name := "grpcInstancia"
+
+	fmt.Println(instance_name)
+
 	host := ":8080"
+
+
 
 	fmt.Println("Server started at: ", host)
 
-	http.HandleFunc("/grpc", http_server)
+	http.HandleFunc("/", http_server)
 
 	if err := http.ListenAndServe(host, nil); err != nil {
 		log.Fatal(err)

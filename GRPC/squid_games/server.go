@@ -123,7 +123,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 
 	petition := bytes.NewBuffer(peticion)
 
-	response, err := http.Post("http://34.72.92.9:80", "application/json", petition)
+	response, err := http.Post("http://104.197.111.247:80", "application/json", petition)
 	if err != nil {
 		log.Fatalln("Error sending info", err)
 	}
@@ -145,7 +145,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 	return res, nil
 }
 func main() {
-	host := "0.0.0.0:8082"
+	host := "0.0.0.0:50051"
 	fmt.Println("Server iniciado en: " + host)
 
 	lis, err := net.Listen("tcp", host)

@@ -1,4 +1,4 @@
-module squidGame
+module squidGameC
 
 go 1.17
 
