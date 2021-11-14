@@ -21,7 +21,7 @@ import (
 type gameStruct struct {
 	Id      int    `json:"ID"`
 	Juego   string `json:"juego"`
-	Ganador int    `json:"max"`
+	Max     int    `json:"max"`
 	Players int    `json:"players"`
 	worker  string `json:"worker"`
 }
@@ -116,7 +116,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 	peticion, _ := json.Marshal(gameStruct{
 		Id:      desicion,
 		Juego:   juego,
-		Ganador: winner,
+		Max:     winner,
 		Players: maximo,
 		worker:  "kafka",
 	})
