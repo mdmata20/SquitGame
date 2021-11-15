@@ -63,7 +63,7 @@ const findGamesByWinner = function(db, callback, id) {
     // Get the documents collection
     const collection = db.collection('games');
     // Find some documents
-    collection.find({"ganador":Number(id)}).toArray(function(err, docs) {
+    collection.find({"max":Number(id)}).toArray(function(err, docs) {
       assert.equal(err, null);
       console.log("Found the following records");
       console.log(id);

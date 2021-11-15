@@ -7,6 +7,7 @@ import BestPlayers from './components/BestPlayers'
 import Navbar from "./components/Navbar"
 import PieChart from './components/PieChart'
 import PieChartWorkers from './components/PieChartWorkers'
+import UserStatistics from './components/UserStatistics'
 import './App.css'
 
 const ENDPOINT = "http://localhost:4001";
@@ -28,6 +29,7 @@ function App() {
         <Route path="/best10" component={BestPlayers} />
         <Route path="/reportTop3Games" component={PieChart} />
         <Route path="/reportWorkers" component={PieChartWorkers} />
+        <Route path="/viewUser/:id" component={UserStatistics} />
       </div>
     </Router>
   )
