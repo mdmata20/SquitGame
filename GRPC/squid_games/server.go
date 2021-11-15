@@ -20,9 +20,9 @@ import (
 
 type gameStruct struct {
 	Id      int    `json:"ID"`
-	Juego   string `json:"juego"`
-	Ganador int    `json:"max"`
-	Players int    `json:"players"`
+	juego   string `json:"juego"`
+	max int    `json:"max"`
+	players int    `json:"players"`
 	worker  string `json:"worker"`
 }
 
@@ -88,64 +88,86 @@ func juego3(jugadores int) int {
 
 }
 
+
 func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.GameResponse, error) {
 
-	var winner int
-	result := ""
+    var winner int
+    result := ""
 
-	id := in.GetGame().GetId()
-	juego := in.GetGame().GetJuego()
-	max := in.GetGame().GetMax()
+    id := in.GetGame().GetId()
+    juego := in.GetGame().GetJuego()
+    max := in.GetGame().GetMax()
 
-	desicion := int(id)
-	maximo := int(max)
+    desicion := int(id)
+    maximo := int(max)
 
-	if desicion == 1 {
-		winner = juego1(maximo)
-	} else if desicion == 2 {
-		winner = juego2(maximo)
-	} else if desicion == 3 {
-		winner = juego3(maximo)
-	} else {
-		winner = 0
-	}
+    if desicion == 1 {
+        winner = juego1(maximo)
+    } else if desicion == 2 {
+        winner = juego2(maximo)
+    } else if desicion == 3 {
+        winner = juego3(maximo)
+    } else {
+        winner = 0
+    }
 
-	//	identificador := strconv.FormatInt(id, 10)
-	//ganador := strconv.Itoa(winner)
+    //    identificador := strconv.FormatInt(id, 10)
+    //ganador := strconv.Itoa(winner)
 
-	peticion, _ := json.Marshal(gameStruct{
-		Id:      desicion,
-		Juego:   juego,
-		Ganador: winner,
-		Players: maximo,
-		worker:  "kafka",
-	})
+    byt := []byte(`{"ID":0}`)
 
-	petition := bytes.NewBuffer(peticion)
+    var dat map[string]interface{}
+    err := json.Unmarshal(byt, &dat); 
 
-	response, err := http.Post("http://34.122.191.135:2062", "application/json", petition)
-	if err != nil {
-		log.Fatalln("Error sending info", err)
-	}
-	//response.Body.Close()
+    if err != nil {
+        fmt.Println(err)
+    }
+    fmt.Println(dat)
 
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// SE NECESITA OTRO ENDPOINT
-	result += string(body)
-	fmt.Println(result + "------------")
-	//result := " ID: " + identificador + " Juego: " + juego + " Ganador!: " + ganador
+    dat["ID"] = desicion
+    dat["juego"] = juego
+    dat["max"] = winner
+    dat["players"] = maximo
+    dat["worker"] = "rabbitMq"
 
-	res := &gamepb.GameResponse{
-		Result: result,
-	}
+    data, err := json.Marshal(dat)
 
-	return res, nil
+  /*  peticion, _ := json.Marshal(gameStruct{
+        Id:      desicion,
+        juego:   juego,
+        max: winner,
+        players: maximo,
+        worker:  "kafka",
+
+    })
+*/
+    petition := bytes.NewBuffer(data)
+
+    response, err := http.Post("http://104.197.111.247:2062/", "application/json", petition)
+    if err != nil {
+        log.Fatalln("Error sending info", err)
+    }
+    //response.Body.Close()
+
+    body, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        log.Fatalln(err)
+    }
+    // SE NECESITA OTRO ENDPOINT
+    result += string(body)
+    fmt.Println(result + "------------")
+    //result := " ID: " + identificador + " Juego: " + juego + " Ganador!: " + ganador
+
+    res := &gamepb.GameResponse{
+        Result: result,
+    }
+
+    return res, nil
 }
+
+
 func main() {
-	host := "0.0.0.0:50051"
+	host := "0.0.0.0:50052"
 	fmt.Println("Server iniciado en: " + host)
 
 	lis, err := net.Listen("tcp", host)

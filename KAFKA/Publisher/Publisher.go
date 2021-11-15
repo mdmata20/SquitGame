@@ -12,7 +12,7 @@ import (
 
 const (
 	topic         = "mytopic"
-	brokerAddress = "34.125.131.17:19092"
+	brokerAddress = "35.188.104.160:19092"
 )
 
 func produce(ctx context.Context, resultado string) {

@@ -18,7 +18,7 @@ func error_(err error, msg string) {
 
 func conection() {
 	//Conectando al servidor
-	conn, err := amqp.Dial("amqp://guest:guest@34.125.189.71:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@34.125.111.145:5672/")
 	error_(err, "Coneccion con RabbitMQ")
 	defer conn.Close()
 

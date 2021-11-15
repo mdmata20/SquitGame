@@ -19,8 +19,10 @@ type juegoStruct struct {
 	Max   int64
 }
 
-func insertGame(id int64, juego string, max int64) {
-	server_host := "Cserver:50051" //debe ser la de cliente
+func insertGame(id int64, juego1 string, max1 int64) {
+	server_host := "34.132.180.187:50051" //debe ser la de cliente
+	//server_host := "0.0.0.0:50051"
+
 
 	fmt.Println("Sending petition . . .")
 
@@ -40,8 +42,8 @@ func insertGame(id int64, juego string, max int64) {
 	request := &gamepb.GameRequest{
 		Game: &gamepb.Juego{
 			Id:    id,
-			Juego: juego,
-			Max:   max,
+			Juego: juego1,
+			Max:   max1,
 		},
 	}
 	fmt.Println(request)

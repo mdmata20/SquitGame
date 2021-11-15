@@ -1,21 +1,17 @@
 version: "2.2"
 services:
-  client:
-    container_name: grpcserver
+  server:
+    container_name: server
     restart: always
     build: ./squid_games
     ports:
-      - "8082:8082"
+      - "50051:50051"
     networks:
       - grpc
 
-  server:
-    container_name: grpccliente
+  cliente:
+    container_name: cliente
     restart: always
-    environment:
-      - CLIENT_HOST=:8080
-      - SERVER_HOST=grpcserver:8082
-      - NAME=grpcinstancia
     build: ./cliente
     ports:
       - "8080:8080"

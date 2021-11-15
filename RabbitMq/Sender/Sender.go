@@ -28,7 +28,7 @@ func nuevo_(w http.ResponseWriter, r *http.Request) {
 	data, err := json.Marshal(body)
 
 	//Conectando al servidor
-	conn, err := amqp.Dial("amqp://guest:guest@34.125.189.71:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@34.125.111.145:5672/")
 	error_(err, "Coneccion con RabbitMQ")
 	defer conn.Close()
 
@@ -70,7 +70,7 @@ func nuevo_(w http.ResponseWriter, r *http.Request) {
 //Maneja la peticion
 func solicitud_() {
 	http.HandleFunc("/", nuevo_)
-	if err := http.ListenAndServe(":80", nil); err != nil {
+	if err := http.ListenAndServe(":2062", nil); err != nil {
 		log.Fatal(err)
 		
 	}
