@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: ClusterIP
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: clientes
+  name: clientes
+  namespace: squidgames
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      io.kompose.service: clientes
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.type: ClusterIP
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        io.kompose.service: clientes
+    spec:
+      containers:
+        - image:  mdmata/grpcclienterabbitv2:latest
+          name: clientes-rabbit
+          resources: {}
+        - image:  mdmata/grpcclientekafka:latest
+          name: clientes-kafka
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: ClusterIP
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: clientes-tcp
+  name: clientes-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  internalTrafficPolicy: Local
+status:
+  loadBalancer: {}
+---
+kind: TrafficSplit
+metadata:
+  name: canary
+spec:
+  # The root service that clients use to connect to the destination application.
+  service: cliente
+  # Services inside the namespace with their own selectors, endpoints and configuration.
+  backends:
+  - service: website-v1
+    weight: 90
+  - service: website-v2
+    weight: 10
+---
+apiVersion: networking.k8s.io/v1 
+kind: Ingress 
+metadata: 
+  name: balance-sopes1
+  namespace: squidgames
+  annotations:
+    traefik.ingress.kubernetes.io/affinity: "true"
+    kubernetes.io/ingress.class: nginx 
+    nginx.ingress.kubernetes.io/rewrite-target: / 
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+spec: 
+  rules: 
+  - host: 34.71.104.182.nip.io
+    http:
+      paths:
+      - path: "/api" 
+        pathType: Prefix 
+        backend: 
+          service:
+            name: cliente
+            port: 
+              number: 8080

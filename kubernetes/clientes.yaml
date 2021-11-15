@@ -1,0 +1,167 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    app: clientes1
+  name: clientes1
+  namespace: squidgames
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clientes1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.type: NodePort
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        app: clientes1
+    spec:
+      containers:
+        - image:  mdmata/grpcclienterabbitv2:latest
+          name: clientes-rabbit
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    app: clientes1-tcp
+  name: clientes1-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: clientes1
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    app: clientes2
+  name: clientes2
+  namespace: squidgames
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clientes2
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.type: NodePort
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        app: clientes2
+    spec:
+      containers:
+        - image:  mdmata/grpcclientekafka:latest
+          name: clientes-kafka
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  namespace: squidgames
+  name: cliente
+spec:
+  # The root service that clients use to connect to the destination application.
+  service: clientes1-tcp
+  # Services inside the namespace with their own selectors, endpoints and configuration.
+  backends:
+  - service: clientes1-tcp
+    weight: 500m
+  - service: clientes2-tcp
+    weight: 500m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    app: clientes2-tcp
+  name: clientes2-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: clientes2
+  type: NodePort
+status:
+  loadBalancer: {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress 
+metadata: 
+  name: balance-sopes1
+  namespace: squidgames
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: / 
+    kubernetes.io/ingress.class: nginx 
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+      grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+spec: 
+  rules: 
+  - host: 34.71.104.182.nip.io
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix 
+        backend: 
+          service:
+            name: clientes1-tcp
+            port: 
+              number: 8080

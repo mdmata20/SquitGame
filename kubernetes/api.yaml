@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.loadBalancerIP: 104.154.103.101
+    kompose.service.type: LoadBalancer
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-db
+  name: api-db
+  namespace: squidgames
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: api-db
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.loadBalancerIP: 104.154.103.101
+        kompose.service.type: LoadBalancer
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        io.kompose.service: api-db
+    spec:
+      containers:
+        - image: mdmata/apijuegov1:latest
+          name: api-db
+          ports:
+            - containerPort: 3010
+          resources: {}
+      restartPolicy: Always
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.loadBalancerIP: 104.154.103.101
+    kompose.service.type: LoadBalancer
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-db-tcp
+  name: api-db-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - name: "3010"
+      port: 3010
+      targetPort: 3010
+  selector:
+    io.kompose.service: api-db
+  type: LoadBalancer
+  loadBalancerIP: "104.154.103.101"
+status:
+  loadBalancer: 
+    ingress:
+    - ip: 104.154.103.101

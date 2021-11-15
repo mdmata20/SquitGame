@@ -1,0 +1,138 @@
+##publisher
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: subscriber-kafka
+  name: subscriber-kafka
+  namespace: squidgames
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: subscriber-kafka
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.type: NodePort
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        io.kompose.service: subscriber-kafka
+    spec:
+      containers:
+        - image: mdmata/kafkasubscriber:latest
+          name: subscriber-kafka
+          ports:
+            - containerPort: 8080
+          resources: {}
+      restartPolicy: Always
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.type: NodePort
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: subscriber-kafka-tcp
+  name: subscriber-kafka-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    io.kompose.service: subscriber-kafka
+  type: NodePort
+status: {}
+
+---
+## publisher
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.loadBalancerIP: 34.122.191.135
+    kompose.service.type: LoadBalancer
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: publisher-kafka
+  name: publisher-kafka
+  namespace: squidgames
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: publisher-kafka
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.service.loadBalancerIP: 34.122.191.135
+        kompose.service.type: LoadBalancer
+        kompose.service.updateStrategy: RollingUpdate
+        kompose.version: 1.25.0 (a70f80cc)
+        linkerd.io/inject: enabled
+      creationTimestamp: null
+      labels:
+        io.kompose.service: publisher-kafka
+    spec:
+      containers:
+        - image: mdmata/kafkapublisher:latest
+          name: publisher-kafka
+          ports:
+            - containerPort: 2062
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.service.loadBalancerIP: 34.122.191.135 
+    kompose.service.type: LoadBalancer
+    kompose.service.updateStrategy: RollingUpdate
+    kompose.version: 1.25.0 (a70f80cc)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: publisher2-kafka-tcp
+  name: publisher2-kafka-tcp
+  namespace: squidgames
+spec:
+  ports:
+    - name: "2062"
+      port: 2062
+      targetPort: 2062
+  selector:
+    io.kompose.service: publisher-kafka
+  type: LoadBalancer
+  loadBalancerIP: "34.122.191.135"
+status:
+  loadBalancer: 
+    ingress:
+    - ip: 34.122.191.135
+
