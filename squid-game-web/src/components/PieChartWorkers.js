@@ -4,37 +4,37 @@ import socketIOClient from "socket.io-client";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const API = "http://localhost:4001/api/games/top3games";
-const ENDPOINT = "http://localhost:4001";
+const API2 = "http://localhost:4001/api/games/workers";
+const ENDPOINT2 = "http://localhost:4001";
  
-class PieChart extends Component {
+class PieChartWorkers extends Component {
     state = {
-        games: []
+        workers: []
     }
 
     componentDidMount() {
-        fetch(`${API}`)
+        fetch(`${API2}`)
         .then((response) => response.json())
-        .then(topGames => {
-            this.setState({ games: topGames });
-            console.log(this.state.games);
+        .then(workersStats => {
+            this.setState({ workers: workersStats });
+            console.log(this.state.workers);
         });
 
-		const socket = socketIOClient(ENDPOINT);
+		const socket = socketIOClient(ENDPOINT2);
       
         socket.on("NewGamesNotify", data => {
             console.log('the db has changed!')
-            this.fetchTop3Games();
+            this.fetchWorkers();
         //toast.info('New Tweets have been pushed!', 
         //{position: toast.POSITION.TOP_CENTER});
         });
     }
 
-	fetchTop3Games = () => {
-        fetch(`${API}`)
+	fetchWorkers = () => {
+        fetch(`${API2}`)
         .then((response) => response.json())
-        .then(gamesList => {
-            this.setState({ games: gamesList });
+        .then(workersStats => {
+            this.setState({ workers: workersStats });
         });
     }
 
@@ -43,37 +43,36 @@ class PieChart extends Component {
 			exportEnabled: true,
 			animationEnabled: true,
 			title: {
-				text: "Top 3 Games"
+				text: "Workers Stats"
 			},
 			data: [{
 				type: "pie",
 				startAngle: 75,
-				toolTipContent: "<b>{_id}</b>: {y}",
+				toolTipContent: "<b>{_id}</b>: {y} insertion(s)",
 				showInLegend: "true",
 				legendText: "{_id}",
 				indexLabelFontSize: 16,
 				indexLabel: "{_id} - {y}",
-				dataPoints: this.state.games
+				dataPoints: this.state.workers
 			}]
 		}
 		
 		return (
 			<div className="container d-flex flex-column justify-content-center align-items-center">
-                <div className="row">
+				<div className="row">
 					<div className="col-md-6" style={{width: 600, padding:5}}>
 						<div className="card">
-            				<div className="card-body">
+							<div className="card-body">
 								<CanvasJSChart options = {options} 
 									/* onRef={ref => this.chart = ref} */
 								/>
-			
             				</div>
         				</div>
 					</div>
-				</div>
+        		</div>
 			</div>
 		);
 	}
 }
 
-export default PieChart;
+export default PieChartWorkers;

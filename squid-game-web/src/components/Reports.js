@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PieChart from './PieChart'
+import PieChartWorkers from './PieChartWorkers'
 //import StackedColumnChart from './StackedColumnChart'
 //import GenericReport from './GenericReport'
 //import './cards.css'
@@ -43,10 +44,10 @@ export class Reports extends Component {
             <div className="container d-flex flex-column justify-content-center align-items-center">
                 <div className="row">
                     <div className="col-md-6" style={{width: 600, padding:5}}>
-                        <PieChart/>
+                        <PieChart />
                     </div>
                     <div className="col-md-6" style={{width: 600, padding:5}}>
-                        
+                        <PieChartWorkers />
                     </div>
                 </div>
             </div>
