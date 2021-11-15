@@ -20,9 +20,13 @@ import (
 
 type gameStruct struct {
 	Id      int    `json:"ID"`
+
 	juego   string `json:"juego"`
 	max int    `json:"max"`
 	players int    `json:"players"`
+
+
+
 	worker  string `json:"worker"`
 }
 
@@ -87,6 +91,44 @@ func juego3(jugadores int) int {
 	return campeon2
 
 }
+/*
+func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.GameResponse, error) {
+	
+
+	var winner int
+	result := ""
+
+	id := in.GetGame().GetId()
+	juego := in.GetGame().GetJuego()
+	max := in.GetGame().GetMax()
+
+	desicion := int(id)
+	maximo := int(max)
+
+	if desicion == 1 {
+		winner = juego1(maximo)
+	} else if desicion == 2 {
+		winner = juego2(maximo)
+	} else if desicion == 3 {
+		winner = juego3(maximo)
+	} else {
+		winner = 0
+	}
+
+	//	identificador := strconv.FormatInt(id, 10)
+	//ganador := strconv.Itoa(winner)
+
+	peticion, _ := json.Marshal(gameStruct{
+		Id:      desicion,
+		Juego:   juego,
+		Max:     winner,
+		Players: maximo,
+		worker:  "kafka",
+	})
+
+	petition := bytes.NewBuffer(peticion)
+}
+*/
 
 
 func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.GameResponse, error) {
@@ -167,7 +209,7 @@ func (s *server) RegGame(ctx context.Context, in *gamepb.GameRequest) (*gamepb.G
 
 
 func main() {
-	host := "0.0.0.0:50052"
+	host := "0.0.0.0:50051"
 	fmt.Println("Server iniciado en: " + host)
 
 	lis, err := net.Listen("tcp", host)
