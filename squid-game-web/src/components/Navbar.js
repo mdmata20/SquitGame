@@ -24,7 +24,10 @@ export default class Navbar extends Component {
                 <Link to="/best10" className="nav-link">Best 10 Players</Link>
               </li>
               <li className="nav-item">
-                <Link to="/reports" className="nav-link">Reports</Link>
+                <Link to="/reportTop3Games" className="nav-link">Top 3 Games Report</Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/reportWorkers" className="nav-link">Workers Report</Link>
               </li>
             </ul>
           </div>

@@ -51,7 +51,7 @@ const findBest10Players = function(db, callback) {
     // Get the documents collection
     const collection = db.collection('games');
     // Find some documents
-    collection.aggregate([{'$group': {_id: '$ganador', count:{$sum:1}}},{$sort:{"count":-1}}]).limit(10).toArray(function(err, games) {
+    collection.aggregate([{'$group': {_id: '$max', count:{$sum:1}}},{$sort:{"count":-1}}]).limit(10).toArray(function(err, games) {
       assert.equal(err, null);
       console.log("Found the following records");
       console.log(games)
@@ -77,6 +77,18 @@ const findTop3Games = function(db, callback) {
     const collection = db.collection('games');
     // Find some documents
     collection.aggregate([{'$group': {_id: '$juego', y:{$sum:1}}},{$sort:{"y":-1}},{$limit:3}]).toArray(function(err, games) {
+      assert.equal(err, null);
+      console.log("Found the following records");
+      console.log(games)
+      callback(games);
+    });
+}
+
+const findWorkers = function(db, callback) {
+    // Get the documents collection
+    const collection = db.collection('games');
+    // Find some documents
+    collection.aggregate([{'$group': {_id: '$worker', y:{$sum:1}}},{$sort:{"y":-1}},{$limit:3}]).toArray(function(err, games) {
       assert.equal(err, null);
       console.log("Found the following records");
       console.log(games)
@@ -177,11 +189,27 @@ const GetTop3Games = (req, res) => {
     });
 }
 
+const GetWorkers = (req, res) => {
+    // Use connect method to connect to the server
+    client.connect(function(err) {
+        assert.equal(null, err);
+        console.log("Connected correctly to server");
+    
+        const db = client.db(dbName);
+    
+        findWorkers(db, function(games) {
+            client.close();
+            res.json(games);
+        });
+    });
+}
+
 module.exports = {
     GetAllGames : GetAllGames,
     GetLast10Games : GetLast10Games,
     GetBest10Players : GetBest10Players,
     GetAllGamesByWinner : GetAllGamesByWinner,
     GetTop3Games : GetTop3Games,
+    GetWorkers : GetWorkers,
     GetAllGamesCount : GetAllGamesCount
 }

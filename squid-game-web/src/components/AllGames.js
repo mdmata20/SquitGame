@@ -56,9 +56,9 @@ class AllGames extends React.Component {
                     {
                         this.state.games.map(game=> (
                             <div className="col-md-4" key={game._id}>
-                                <Card Identificador={game.identificador} 
+                                <Card Identificador={game.ID} 
                                 Juego={game.juego} 
-                                Ganador={game.ganador}/>
+                                Ganador={game.max}/>
                             </div>
                         ))
                     }
