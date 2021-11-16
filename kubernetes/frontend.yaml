@@ -3,35 +3,39 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose convert
-    kompose.service.type: NodePort
+    kompose.service.loadBalancerIP: 35.225.182.66
+    kompose.service.type: LoadBalancer
     kompose.service.updateStrategy: RollingUpdate
     kompose.version: 1.25.0 (a70f80cc)
   creationTimestamp: null
   labels:
-    app: clientes1
-  name: clientes1
+    io.kompose.service: nodejs
+  name: nodejs
   namespace: squidgames
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: clientes1
+      io.kompose.service: nodejs
   strategy: {}
   template:
     metadata:
       annotations:
         kompose.cmd: kompose convert
-        kompose.service.type: NodePort
+        kompose.service.loadBalancerIP: 35.225.182.66
+        kompose.service.type: LoadBalancer
         kompose.service.updateStrategy: RollingUpdate
         kompose.version: 1.25.0 (a70f80cc)
         linkerd.io/inject: enabled
       creationTimestamp: null
       labels:
-        app: clientes1
+        io.kompose.service: nodejs
     spec:
       containers:
-        - image:  mdmata/grpcclienterabbitv2:latest
-          name: clientes-rabbit
+        - image: mdmata/nodejs:latest
+          name: nodejs
+          ports:
+            - containerPort: 4001
           resources: {}
       restartPolicy: Always
 status: {}
@@ -41,25 +45,29 @@ kind: Service
 metadata:
   annotations:
     kompose.cmd: kompose convert
-    kompose.service.type: NodePort
+    kompose.service.loadBalancerIP: 35.225.182.66 
+    kompose.service.type: LoadBalancer
     kompose.service.updateStrategy: RollingUpdate
     kompose.version: 1.25.0 (a70f80cc)
   creationTimestamp: null
   labels:
-    app: clientes1-tcp
-  name: clientes1-tcp
+    io.kompose.service: nodejs-tcp
+  name: nodejs-tcp
   namespace: squidgames
 spec:
   ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
+    - name: "4001"
+      port: 4001
+      targetPort: 4001
   selector:
-    app: clientes1
-  type: NodePort
+    io.kompose.service: nodejs
+  type: LoadBalancer
+  loadBalancerIP: "35.225.182.66"
 status:
-  loadBalancer: {}
+  loadBalancer: 
+    ingress:
+    - ip: 35.225.182.66
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -71,14 +79,14 @@ metadata:
     kompose.version: 1.25.0 (a70f80cc)
   creationTimestamp: null
   labels:
-    app: clientes2
-  name: clientes2
+    app: squitgame
+  name: squitgame
   namespace: squidgames
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: clientes2
+      app: squitgame
   strategy: {}
   template:
     metadata:
@@ -90,34 +98,14 @@ spec:
         linkerd.io/inject: enabled
       creationTimestamp: null
       labels:
-        app: clientes2
+        app: squitgame
     spec:
       containers:
-        - image:  mdmata/grpcclientekafka:latest
-          name: clientes-kafka
+        - image:  mdmata/reactweb:latest
+          name: applicacion
           resources: {}
       restartPolicy: Always
 status: {}
-
-#Split
----
-apiVersion: split.smi-spec.io/v1alpha1
-kind: TrafficSplit
-metadata:
-  namespace: squidgames
-  name: cliente
-spec:
-  # The root service that clients use to connect to the destination application.
-  service: clientes1-tcp
-  # Services inside the namespace with their own selectors, endpoints and configuration.
-  backends:
-    #rabbit
-  - service: clientes1-tcp
-    weight: 500m
-    #kafka
-  - service: clientes2-tcp
-    weight: 500m
-
 ---
 apiVersion: v1
 kind: Service
@@ -129,17 +117,17 @@ metadata:
     kompose.version: 1.25.0 (a70f80cc)
   creationTimestamp: null
   labels:
-    app: clientes2-tcp
-  name: clientes2-tcp
+    app: squitgame-tcp
+  name: squitgame-tcp
   namespace: squidgames
 spec:
   ports:
     - name: http
-      port: 8080
+      port: 3000
       protocol: TCP
-      targetPort: 8080
+      targetPort: 3000
   selector:
-    app: clientes2
+    app: squitgame
   type: NodePort
 status:
   loadBalancer: {}
@@ -148,7 +136,7 @@ status:
 apiVersion: networking.k8s.io/v1
 kind: Ingress 
 metadata: 
-  name: balance-sopes1
+  name: balance-sopes
   namespace: squidgames
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: / 
@@ -159,13 +147,14 @@ metadata:
       grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
 spec: 
   rules: 
-  - host: 34.71.104.182.nip.io
+  - host: 34.132.196.89.nip.io
     http:
       paths:
       - path: "/"
         pathType: Prefix 
         backend: 
           service:
-            name: clientes1-tcp
+            name: squitgame-tcp
             port: 
-              number: 8080
+              number: 3000
+
