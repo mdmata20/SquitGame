@@ -3,8 +3,8 @@ import Card from './Card'
 import socketIOClient from "socket.io-client";
 import './games.css'
 
-const API = "http://localhost:4001/api/games/top10";
-const ENDPOINT = "http://localhost:4001";
+const API = "http://35.225.182.66:4001/api/games/top10";
+const ENDPOINT = "http://35.225.182.66:4001";
 
 class Games extends React.Component {
     state = {

@@ -75,13 +75,13 @@ func endpoint(game int, gamename string, players int, rungames int, concurrence 
 			defer wg.Done()
 
 			for _, n := range jsonJ {
-				time.Sleep(500 * time.Millisecond)
+				time.Sleep(1000 * time.Millisecond)
 				fmt.Println("===HACER POST AQUI============ \n \n ")
 				json_p, err := json.Marshal(n)
 				if err != nil {
 					fmt.Println("Error en MArshal")
 				}
-				resp, err := http.Post("http://localhost:8080/grpc", "application/json", bytes.NewBuffer(json_p))
+				resp, err := http.Post("http://34.71.104.182.nip.io", "application/json", bytes.NewBuffer(json_p))
 				if err != nil {
 					fmt.Println("Error de conexión")
 				}
@@ -101,7 +101,7 @@ func endpoint(game int, gamename string, players int, rungames int, concurrence 
 				}
 			}
 
-			time.Sleep(1 * time.Second)
+			time.Sleep(1000 * time.Millisecond)
 
 			//	atomic.AddInt64(&int64(cont_tiempo), int64(concurrence))
 		}(parte)

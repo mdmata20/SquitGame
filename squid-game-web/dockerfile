@@ -1,5 +1,5 @@
 # pull the official base image
-FROM node: alpine
+FROM node:alpine
 
 # set working direction
 WORKDIR /app
@@ -8,9 +8,11 @@ WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 
-RUN npm install
 # add app
 COPY . ./
+
+RUN npm install
+
 
 # expose port
 EXPOSE 3000

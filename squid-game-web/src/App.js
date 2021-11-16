@@ -10,7 +10,7 @@ import PieChartWorkers from './components/PieChartWorkers'
 import UserStatistics from './components/UserStatistics'
 import './App.css'
 
-const ENDPOINT = "http://localhost:4001";
+const ENDPOINT = "http://35.225.182.66:4001";
 
 function App() {
   const [response, setResponse] = useState("");

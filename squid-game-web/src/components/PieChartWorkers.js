@@ -4,8 +4,8 @@ import socketIOClient from "socket.io-client";
 
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const API2 = "http://localhost:4001/api/games/workers";
-const ENDPOINT2 = "http://localhost:4001";
+const API2 = "http://35.225.182.66:4001/api/games/workers";
+const ENDPOINT2 = "http://35.225.182.66:4001";
  
 class PieChartWorkers extends Component {
     state = {

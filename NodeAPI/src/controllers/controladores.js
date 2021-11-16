@@ -97,6 +97,7 @@ const findWorkers = function(db, callback) {
 }
 
 const GetAllGamesCount = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -112,6 +113,7 @@ const GetAllGamesCount = (req, res) => {
 }
 
 const GetAllGames = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -127,6 +129,7 @@ const GetAllGames = (req, res) => {
 }
 
 const GetLast10Games = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -142,6 +145,7 @@ const GetLast10Games = (req, res) => {
 }
 
 const GetBest10Players = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -157,7 +161,7 @@ const GetBest10Players = (req, res) => {
 }
 
 const GetAllGamesByWinner = (req, res) => {
-
+    res.header("Access-Control-Allow-Origin", "*");
     var id = req.params.winner;
 
     // Use connect method to connect to the server
@@ -175,6 +179,7 @@ const GetAllGamesByWinner = (req, res) => {
 }
 
 const GetTop3Games = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -190,6 +195,7 @@ const GetTop3Games = (req, res) => {
 }
 
 const GetWorkers = (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     // Use connect method to connect to the server
     client.connect(function(err) {
         assert.equal(null, err);
@@ -202,6 +208,8 @@ const GetWorkers = (req, res) => {
             res.json(games);
         });
     });
+
+    
 }
 
 module.exports = {

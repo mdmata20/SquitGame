@@ -2,8 +2,8 @@ import React from 'react'
 import Card from './Card'
 import socketIOClient from "socket.io-client";
 
-const API = "http://localhost:4001/api/games/";
-const ENDPOINT = "http://localhost:4001";
+const API = "http://35.225.182.66:4001/api/games/";
+const ENDPOINT = "http://35.225.182.66:4001";
 
 class UserStatistics extends React.Component {
     

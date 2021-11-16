@@ -22,6 +22,12 @@ const TIMEOUT = process.env.TIMEOUT || 18000;
 // En este array guardaremos nuestros datos
 const messages = [];
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 4001;
